@@ -13,10 +13,17 @@ struct FeedView: View {
             ScrollView {
                 LazyVStack {
                     ForEach(0..<10, id: \.self) { index in
-                        Text("Thread Item \(index + 1)")
+                        ThreadCell()
                     }
                 }
             }
+            .refreshable {
+                print("Refreshed")
+            }
+            
+            .navigationTitle("Threads")
+            .navigationBarTitleDisplayMode(.inline)
+            
         }
     }
 }

@@ -9,7 +9,56 @@ import SwiftUI
 
 struct ThreadCell: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            HStack(alignment: .top, spacing: 12) {
+                CircularProfileView()
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("Username")
+                            .font(.footnote)
+                            .fontWeight(.bold)
+                        
+                        Spacer()
+                        
+                        Text("2h")
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                        
+                        Button {
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    
+                    Text("This is a sample thread content. It can span multiple lines and should be displayed properly in the cell.")
+                        .font(.footnote)
+                        .multilineTextAlignment(.leading)
+                        
+                    HStack {
+                        Button {
+                        } label: {
+                            Image(systemName: "heart")
+                        }
+                        Button {
+                        } label: {
+                            Image(systemName: "bubble.left")
+                        }
+                        Button {
+                        } label: {
+                            Image(systemName: "arrow.2.squarepath")
+                        }
+                        Button {
+                        } label: {
+                            Image(systemName: "paperplane")
+                        }
+                    }.foregroundColor(.black).padding(.vertical, 8)
+                    
+                }
+            }
+            Divider()
+        }.padding()
     }
 }
 
