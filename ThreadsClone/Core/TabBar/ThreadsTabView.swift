@@ -10,6 +10,8 @@ import SwiftUI
 struct ThreadsTabView: View {
     
     @State private var selectedTab: Int = 0
+    @State private var showCreateSheet: Bool = false
+    @State private var previousTab: Int = 0 // Store the previous tab
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -19,22 +21,17 @@ struct ThreadsTabView: View {
                         .environment(\.symbolVariants, selectedTab==0 ? .fill : .none)
                     Text("Home")
                 }
-                .onAppear {
-                    selectedTab = 0
-                }
                 .tag(0)
             
             ExploreView()
                 .tabItem {
                     Image(systemName: "magnifyingglass")
                     Text("Explore")
-                }.onAppear {
-                    selectedTab = 1
                 }
                 .tag(1)
             
             
-            ThreadCreationView()
+            Color.clear // Empty view for Create tab
                 .tabItem {
                     Image(systemName: "plus.app.fill")
                         .renderingMode(.template)
@@ -50,8 +47,6 @@ struct ThreadsTabView: View {
                     Image(systemName: selectedTab==3 ? "heart.fill" : "heart")
                         .environment(\.symbolVariants, selectedTab==3 ? .fill : .none)
                     Text("Activity")
-                }.onAppear {
-                    selectedTab = 3
                 }
                 .tag(3)
             
@@ -60,12 +55,29 @@ struct ThreadsTabView: View {
                     Image(systemName: selectedTab==4 ? "person.fill" : "person")
                         .environment(\.symbolVariants, selectedTab==4 ? .fill : .none)
                     Text("Profile")
-                }.onAppear {
-                    selectedTab = 4
                 }
                 .tag(4)
 
-        }.tint(.black)
+        }
+        .onChange(of: selectedTab) { oldValue, newValue in
+            if newValue == 2 {
+                // Save the previous tab before showing the sheet
+                previousTab = oldValue
+                
+                // When user selects the create tab, show the sheet
+                showCreateSheet = true
+                
+                // Immediately set the tab back to previous tab
+                selectedTab = previousTab
+            }
+        }
+        .sheet(isPresented: $showCreateSheet, onDismiss: {
+            // Return to the previous tab when sheet is dismissed
+            selectedTab = previousTab
+        }) {
+            ThreadCreationView()
+        }
+        .tint(.black)
     }
 }
 
