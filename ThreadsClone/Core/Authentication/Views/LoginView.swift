@@ -11,6 +11,7 @@ struct LoginView: View {
     
     @State private var email: String = ""
     @State private var password: String = ""
+    @StateObject var viewModel = LoginViewModel()
     
     var body: some View {
         NavigationStack{
@@ -26,17 +27,17 @@ struct LoginView: View {
 
                 VStack(spacing: 20) {
                     VStack(spacing: 12) {
-                        TextField("Enter Your Email", text: $email)
+                        TextField("Enter Your Email", text: $viewModel.email)
                             .autocapitalization(.none)
                             .modifier(ThreadsTextFieldModifiers())
                         
-                        SecureField("Enter Your Password", text: $password)
+                        SecureField("Enter Your Password", text: $viewModel.password)
                             .modifier(ThreadsTextFieldModifiers())
                     }
                     .padding(.horizontal)
                     
                     Button {
-                        // Action will go here
+                        Task{ try await viewModel.login() }
                     } label: {
                         Text("Login")
                             .font(.subheadline)
