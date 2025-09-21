@@ -28,6 +28,7 @@ struct RegistrationView: View {
             VStack(spacing: 20) {
                 VStack(spacing: 12) {
                     TextField("Enter Your Email", text: $viewModel.email)
+                        .autocapitalization(.none)
                         .modifier(ThreadsTextFieldModifiers())
                     
                     SecureField("Enter Your Password", text: $viewModel.password)
@@ -36,8 +37,12 @@ struct RegistrationView: View {
                     TextField("Enter Your fullname", text: $viewModel.fullname)
                         .modifier(ThreadsTextFieldModifiers())
                     
-                    TextField("Enter Your username", text: $viewModel.username)
-                        .modifier(ThreadsTextFieldModifiers())
+                    TextField("Enter Your username", text: Binding(
+                        get: { viewModel.username },
+                        set: { viewModel.username = $0.filter { !$0.isWhitespace } }
+                    ))
+                    .autocapitalization(.none)
+                    .modifier(ThreadsTextFieldModifiers())
                 }
                 .padding(.horizontal)
             }
