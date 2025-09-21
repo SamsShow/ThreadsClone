@@ -12,11 +12,14 @@ class ExploreViewModel: ObservableObject {
     @MainActor
     func fetchUsers(withSearch searchText: String = "") async {
         do {
-            print("DEBUG: Attempting to fetch users directly")
+            // Get current user ID for filtering
+            guard let currentUid = Auth.auth().currentUser?.uid else {
+                print("DEBUG: No authenticated user found")
+                return
+            }
             
             // Direct Firestore fetch without filtering
             let snapshot = try await Firestore.firestore().collection("users").getDocuments()
-            print("DEBUG: Firestore returned \(snapshot.documents.count) documents")
             
             // Process documents manually to avoid filtering issues
             var fetchedUsers = [User]()
@@ -25,28 +28,31 @@ class ExploreViewModel: ObservableObject {
                 do {
                     if let id = document.data()["id"] as? String,
                        let fullName = document.data()["fullName"] as? String,
-                       let email = document.data()["email"] as? String, 
+                       let email = document.data()["email"] as? String,
                        let username = document.data()["username"] as? String {
+                        
+                        // Skip the current user
+                        if id == currentUid {
+                            print("DEBUG: Skipping current user: \(username)")
+                            continue
+                        }
                         
                         let profileImageUrl = document.data()["profileImageUrl"] as? String
                         let bio = document.data()["bio"] as? String
                         
-                        let user = User(id: id, 
-                                      fullName: fullName, 
-                                      email: email, 
-                                      username: username, 
-                                      profileImageUrl: profileImageUrl, 
+                        let user = User(id: id,
+                                      fullName: fullName,
+                                      email: email,
+                                      username: username,
+                                      profileImageUrl: profileImageUrl,
                                       bio: bio)
                         
                         fetchedUsers.append(user)
-                        print("DEBUG: Successfully processed user: \(username)")
                     }
                 } catch {
                     print("DEBUG: Failed to process document with ID: \(document.documentID), error: \(error.localizedDescription)")
                 }
             }
-            
-            print("DEBUG: Manually processed \(fetchedUsers.count) users")
             
             // Set all users and then filter if needed
             self.users = fetchedUsers

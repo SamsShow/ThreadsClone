@@ -18,7 +18,7 @@ struct UserCellView: View {
                 Text(user.fullName)
                     .fontWeight(.bold)
                 
-                Text("@\(user.username)")
+                Text("@\(user.fullName)")
             }
             .font(.footnote)
             
